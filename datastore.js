@@ -21,7 +21,6 @@ exports.syncData = async function() {
 }
 
 exports.search = function(query) {
-    console.log(query)
     return new Promise((resolve, reject) => {
         db.find(query, function(err, docs) {
             console.log("docs", docs)

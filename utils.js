@@ -10,23 +10,34 @@ module.exports = {
         }
 
         Object.keys(params).forEach((key, index) => {
+
             if (isParamIntType(key)) {
                 params[key] = parseInt(params[key])
             }
 
             if (isParamArrayType(key)) {
-                params[key] = { $in: [params[key]] }
+                if (key == 'category') {
+                    params['categories'] = { $in: [params[key]] }
+                    delete params['category']
+                    key = 'categories';
+                } else if (key == 'author') {
+                    params['authors'] = { $in: [params[key]] }
+                    delete params['author']
+                    key = 'author';
+                } else {
+                    params[key] = { $in: [params[key]] }
+                }
             }
 
             if (key == 'date') {
                 params[key] = parseDateParam(params[key]);
             }
 
-            if (nestedKeys[key]) {
+            if (nestedKeys[key])
                 query[nestedKeys[key]['parent'] + '.' + key] = params[key];
-            } else {
+            else
                 query[key] = params[key];
-            }
+
         });
 
         return query;
@@ -45,7 +56,7 @@ function isParamIntType(param) {
 }
 
 function isParamArrayType(param) {
-    return ['categories', 'authors'].includes(param);
+    return ['categories', 'authors', 'category', 'author'].includes(param);
 }
 
 function parseDateParam(param) {
